@@ -1,0 +1,11 @@
+[
+  {
+    "guid": "6b1d4f0e-3c7a-4e29-9a55-d3f1c0a8b7e2",
+    "name": "Depth Posters",
+    "description": "3D parallax hover effect for posters, driven by depth maps from the jellyfin-depth-posters service.",
+    "overview": "Parallax and tilt on poster hover using generated depth maps.",
+    "owner": "maxbengtzen",
+    "category": "General",
+    "versions": []
+  }
+]

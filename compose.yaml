@@ -1,0 +1,63 @@
+# jellyfin-depth-posters
+#
+# 1. cp .env.example .env   and fill it in (API key, Jellyfin's Docker network)
+# 2. docker compose up -d
+#
+# The service joins the Docker network Jellyfin runs on (JELLYFIN_NETWORK), so it can
+# reach Jellyfin by container name and Jellyfin can reach it. No port is published:
+# the Jellyfin plugin proxies everything, and the API has no authentication.
+
+services:
+  jellyfin-depth-posters:
+    image: ghcr.io/maxbengtzen/jellyfin-depth-posters:latest
+    restart: unless-stopped
+    user: "${PUID:-1000}:${PGID:-1000}"
+    environment:
+      JELLYFIN_URL: ${JELLYFIN_URL:-http://jellyfin:8096}
+      JELLYFIN_API_KEY: ${JELLYFIN_API_KEY:?Set JELLYFIN_API_KEY in .env}
+      DEPTH_MODEL: ${DEPTH_MODEL:-small}
+      ENABLE_LAYERS: ${ENABLE_LAYERS:-false}
+      MAX_SIZE: ${MAX_SIZE:-720}
+      SCAN_INTERVAL_MIN: ${SCAN_INTERVAL_MIN:-30}
+      ITEM_TYPES: ${ITEM_TYPES:-Movie,Series}
+    volumes:
+      - ./data:/data      # generated depth maps and layers
+      - ./.cache:/cache   # downloaded model weights
+
+  # --- developer tools (docker compose --profile tools ...) -----------------------
+  # Generate depth maps / layers for images in ./posters and look at them in the
+  # playground. See docs/playground.md.
+  depth-cli:
+    profiles: ["tools"]
+    image: ghcr.io/maxbengtzen/jellyfin-depth-posters:latest
+    entrypoint: ["python", "depth.py"]
+    user: "${PUID:-1000}:${PGID:-1000}"
+    volumes:
+      - ./posters:/posters:ro
+      - ./output:/output
+      - ./.cache:/cache
+
+  layers-cli:
+    profiles: ["tools"]
+    image: ghcr.io/maxbengtzen/jellyfin-depth-posters:latest
+    entrypoint: ["python", "layers.py"]
+    user: "${PUID:-1000}:${PGID:-1000}"
+    volumes:
+      - ./posters:/posters:ro
+      - ./output:/output
+      - ./.cache:/cache
+
+  playground:
+    profiles: ["tools"]
+    image: nginx:alpine
+    ports:
+      - "127.0.0.1:8765:80"
+    volumes:
+      - ./tools/playground:/usr/share/nginx/html:ro
+      - ./posters:/usr/share/nginx/html/posters:ro
+      - ./output:/usr/share/nginx/html/output:ro
+
+networks:
+  default:
+    external: true
+    name: ${JELLYFIN_NETWORK:-jellyfin_default}

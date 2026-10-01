@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Depth Posters</title>
+</head>
+<body>
+<div id="DepthPostersConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox">
+    <div data-role="content">
+        <div class="content-primary">
+            <h2>Depth Posters</h2>
+            <p>
+                Parallax and tilt on poster hover, driven by depth maps from the
+                <a is="emby-linkbutton" class="button-link" href="https://github.com/maxbengtzen/jellyfin-depth-posters" target="_blank" rel="noopener">jellyfin-depth-posters</a>
+                service. Reload the web UI after saving.
+            </p>
+            <form id="DepthPostersConfigForm">
+                <div class="inputContainer">
+                    <input is="emby-input" type="text" id="ServiceUrl" label="Service URL" required />
+                    <div class="fieldDescription">Address of the service as seen from the Jellyfin server, e.g. http://jellyfin-depth-posters:8000</div>
+                </div>
+                <div class="checkboxContainer checkboxContainer-withDescription">
+                    <label class="emby-checkbox-label">
+                        <input is="emby-checkbox" type="checkbox" id="UseLayers" />
+                        <span>Use inpainted layers when available</span>
+                    </label>
+                    <div class="fieldDescription checkboxFieldDescription">Needs ENABLE_LAYERS=true on the service. Falls back to the depth map otherwise.</div>
+                </div>
+                <div class="inputContainer">
+                    <input is="emby-input" type="number" id="Strength" label="Parallax strength" min="0" max="0.2" step="0.005" />
+                    <div class="fieldDescription">How far the poster layers move. 0.04 is subtle, 0.08 is strong.</div>
+                </div>
+                <div class="inputContainer">
+                    <input is="emby-input" type="number" id="Tilt" label="Tilt (degrees)" min="0" max="25" step="0.5" />
+                </div>
+                <div class="inputContainer">
+                    <input is="emby-input" type="number" id="Focus" label="Focus depth" min="0" max="1" step="0.05" />
+                    <div class="fieldDescription">0 = far, 1 = near. The depth that stays still while the rest moves.</div>
+                </div>
+                <div>
+                    <button is="emby-button" type="submit" class="raised button-submit block emby-button">
+                        <span>Save</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        (function () {
+            const pluginId = '6b1d4f0e-3c7a-4e29-9a55-d3f1c0a8b7e2';
+            const page = document.querySelector('#DepthPostersConfigPage');
+
+            page.addEventListener('pageshow', function () {
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                    page.querySelector('#ServiceUrl').value = config.ServiceUrl;
+                    page.querySelector('#UseLayers').checked = config.UseLayers;
+                    page.querySelector('#Strength').value = config.Strength;
+                    page.querySelector('#Tilt').value = config.Tilt;
+                    page.querySelector('#Focus').value = config.Focus;
+                    Dashboard.hideLoadingMsg();
+                });
+            });
+
+            page.querySelector('#DepthPostersConfigForm').addEventListener('submit', function (e) {
+                e.preventDefault();
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+                    config.ServiceUrl = page.querySelector('#ServiceUrl').value.trim();
+                    config.UseLayers = page.querySelector('#UseLayers').checked;
+                    config.Strength = parseFloat(page.querySelector('#Strength').value);
+                    config.Tilt = parseFloat(page.querySelector('#Tilt').value);
+                    config.Focus = parseFloat(page.querySelector('#Focus').value);
+                    ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
+                });
+                return false;
+            });
+        })();
+    </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+compose.override.yaml
+
+# Generated data, model weights and copyrighted sample material
+data/
+.cache/
+posters/
+output/
+
+# Build output
+plugin/bin/
+plugin/obj/
+plugin/obj_cache/
+plugin/dist/
+__pycache__/
+*.pyc
+.pytest_cache/

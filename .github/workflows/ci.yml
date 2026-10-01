@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  service:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker build -t jellyfin-depth-posters:ci service
+      - name: Run tests
+        run: |
+          docker run --rm --entrypoint sh -v "$PWD/service:/app" jellyfin-depth-posters:ci \
+            -c 'pip install -q -r requirements-dev.txt && python -m pytest -q -p no:cacheprovider'
+
+  plugin:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Build plugin
+        run: dotnet build plugin -c Release
+      - name: Check front-end script syntax
+        run: node --check plugin/src/Web/script.js
+
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
