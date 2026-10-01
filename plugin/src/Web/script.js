@@ -87,7 +87,7 @@
     if (gl) return true;
     canvas = document.createElement('canvas');
     canvas.className = 'depth-poster-canvas';
-    canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;border-radius:inherit;transform-origin:center;will-change:transform;';
+    canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;border-radius:inherit;transform-origin:center;will-change:transform;';
     gl = canvas.getContext('webgl', { antialias: true, alpha: false });
     if (!gl) return false;
     const sh = (type, src) => {
@@ -204,7 +204,13 @@
       gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, entry.dep);
     }
     cur = [0, 0];
-    el.insertBefore(canvas, el.firstChild);
+    // Where the canvas goes decides what paints on top of it. Legacy cards draw the poster as the
+    // container's background, so the canvas can come first. React cards (library pages) put a
+    // positioned <img> inside, which would cover a canvas placed before it: insert right after it,
+    // but before later siblings such as the played/progress indicators.
+    let anchor = el.querySelector('img');
+    while (anchor && anchor.parentElement !== el) anchor = anchor.parentElement;
+    if (anchor) anchor.after(canvas); else el.insertBefore(canvas, el.firstChild);
     if (!raf) raf = requestAnimationFrame(frame);
   }
 
