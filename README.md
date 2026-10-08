@@ -4,6 +4,8 @@
 
 A small service generates a depth map for every movie and series poster in your library. A Jellyfin plugin then renders the effect in the web UI with WebGL. Everything runs locally; nothing leaves your network except the one-time model downloads.
 
+![demo](gui-demo.gif)
+
 > **Status:** early. Developed and tested against **Jellyfin 12.1**. Other versions are untested.
 
 ## How it works
