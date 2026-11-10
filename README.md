@@ -4,9 +4,17 @@
 
 A small service generates a depth map for every movie and series poster in your library. A Jellyfin plugin then renders the effect in the web UI with WebGL. Everything runs locally; nothing leaves your network except the one-time model downloads.
 
-![demo](gui-demo.gif)
+<p align="center">
+  <img src="docs/media/demo-closeup.webp" width="440" alt="A poster of a pier at night tilting under the pointer; the lantern, the pier and the island move at different speeds">
+</p>
 
-> **Status:** early. Developed and tested against **Jellyfin 12.1**. Other versions are untested.
+In the library, every poster that has been processed reacts to the pointer:
+
+![Hovering four posters in the Jellyfin library](docs/media/demo-jellyfin.webp)
+
+<sub>The posters in the demo are [our own renders](tools/sample-posters/) and are CC0.</sub>
+
+> **Status:** an experiment that works. Developed against **Jellyfin 12.1** and also run on 12.4. Other versions are untested.
 
 ## How it works
 
@@ -116,4 +124,4 @@ This project is MIT licensed. It builds on:
 - [File Transformation](https://github.com/IAmParadox27/jellyfin-plugin-file-transformation) for injecting the script into Jellyfin
 - PyTorch, Hugging Face Transformers, FastAPI
 
-Movie posters are copyrighted by their owners. This project does not ship any; it only processes the ones already in your own Jellyfin library.
+Movie posters are copyrighted by their owners. This project does not ship any; it only processes the ones already in your own Jellyfin library. The [sample posters](tools/sample-posters/) are our own renders of films that do not exist, made from CC0 assets from [Poly Haven](https://polyhaven.com/), and are themselves CC0.

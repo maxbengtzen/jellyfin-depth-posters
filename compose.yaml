@@ -53,7 +53,7 @@ services:
     ports:
       - "127.0.0.1:8765:80"
     volumes:
-      - ./tools/playground:/usr/share/nginx/html:ro
+      - ./tools/playground/index.html:/usr/share/nginx/html/index.html:ro
       - ./posters:/usr/share/nginx/html/posters:ro
       - ./output:/usr/share/nginx/html/output:ro
 

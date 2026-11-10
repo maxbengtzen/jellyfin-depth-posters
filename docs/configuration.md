@@ -55,9 +55,13 @@ Used by the plugin; documented for debugging.
 | `GET /api/status` | `{total, done, queued, failed, current, scanning, last_scan, model, layers}` |
 | `POST /api/scan` | Start a library scan now |
 
+## Image tags
+
+`compose.yaml` pulls `ghcr.io/maxbengtzen/jellyfin-depth-posters:latest`. Each release is also tagged `X.Y.Z`, `X.Y` and `X`; pin one of those if you prefer to update on your own schedule. Images are built for `linux/amd64` and `linux/arm64`, with an SBOM and build provenance attached.
+
 ## Building from source
 
-`compose.yaml` pulls `ghcr.io/maxbengtzen/jellyfin-depth-posters`. To build locally instead, add to `compose.override.yaml`:
+To build the image locally instead, add to `compose.override.yaml`:
 
 ```yaml
 services:

@@ -18,3 +18,8 @@ plugin/dist/
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Sample poster sources (downloaded assets, fonts, renders)
+tools/sample-posters/assets/
+tools/sample-posters/fonts/
+tools/sample-posters/out/
