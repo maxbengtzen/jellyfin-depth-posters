@@ -4,37 +4,57 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
 
 jobs:
   service:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
       - name: Build image
         run: docker build -t jellyfin-depth-posters:ci service
       - name: Run tests
         run: |
           docker run --rm --entrypoint sh -v "$PWD/service:/app" jellyfin-depth-posters:ci \
             -c 'pip install -q -r requirements-dev.txt && python -m pytest -q -p no:cacheprovider'
+      - name: Audit Python packages
+        run: |
+          # torch and torchvision come from the PyTorch CPU index; pip-audit lists them as skipped
+          docker run --rm --entrypoint sh jellyfin-depth-posters:ci -c 'pip install -q pip-audit && pip-audit'
 
   plugin:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
         with:
           dotnet-version: 10.0.x
       - name: Build plugin
         run: dotnet build plugin -c Release
+      - name: Check for vulnerable NuGet packages
+        run: |
+          dotnet list plugin package --vulnerable --include-transitive | tee nuget.txt
+          ! grep -q '^\s*>' nuget.txt
       - name: Check front-end script syntax
         run: node --check plugin/src/Web/script.js
 
   secrets:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
+          persist-credentials: false
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
