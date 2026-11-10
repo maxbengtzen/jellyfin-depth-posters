@@ -14,7 +14,7 @@ In the library, every poster that has been processed reacts to the pointer:
 
 <sub>The posters in the demo are [our own renders](tools/sample-posters/) and are CC0.</sub>
 
-> **Status:** an experiment that works. Developed against **Jellyfin 12.1** and also run on 12.4. Other versions are untested.
+> **Archived.** This was an experiment, and it works: developed against **Jellyfin 12.1** and also run on 12.4. It is kept as a reference and is no longer maintained, so dependencies will age. The [v1.0.0 image](https://github.com/maxbengtzen/jellyfin-depth-posters/pkgs/container/jellyfin-depth-posters) and plugin release stay available.
 
 ## How it works
 
