@@ -4,6 +4,7 @@ Try the effect on your own images, without Jellyfin, and compare models.
 
 ```bash
 mkdir -p posters output                    # put .png/.jpg/.webp images in posters/
+cp tools/sample-posters/*.jpg posters/     # or start with the CC0 sample posters
 docker compose --profile tools run --rm depth-cli                 # depth maps (small + base)
 docker compose --profile tools run --rm depth-cli --models large  # another model
 docker compose --profile tools run --rm layers-cli --depth-model base  # inpainted layers
