@@ -1,5 +1,8 @@
 FROM python:3.12-slim
 
+# The base image ships an old pip; torch pulls in setuptools. Keep both current.
+RUN pip install --no-cache-dir --upgrade pip==26.3 setuptools==84.2.1
+
 # CPU-only PyTorch keeps the image small; the models are fast enough on CPU.
 RUN pip install --no-cache-dir torch==2.14.1 torchvision==0.29.1 --index-url https://download.pytorch.org/whl/cpu
 

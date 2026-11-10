@@ -1,11 +1,11 @@
 # torch / torchvision (CPU build) are installed separately in the Dockerfile.
-transformers==5.18.0
+transformers==5.22.2
 safetensors==0.8.0
-tokenizers==0.23.2
-pillow==12.3.0
-numpy==2.5.2
+tokenizers==0.23.3
+pillow==13.0.0
+numpy==2.5.4
 scipy==1.18.1
 scikit-image==0.26.0
-fastapi==0.142.2
+fastapi==0.162.2
 uvicorn==0.54.0
 httpx==0.28.1
